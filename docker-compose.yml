@@ -1,0 +1,32 @@
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: Ravi@123
+      MYSQL_DATABASE: ravisales
+    ports:
+      - "3306:3306"  # or "3307:3306" if you changed it
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  sales-savvy-app:
+    image: sales-savvy-app
+    container_name: sales-savvy-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ravisales  # or jdbc:mysql://mysql:3307/ravisales
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Ravi@123
+    volumes:
+      - ./src/main/resources/application.properties:/app/config/application.properties
+
+volumes:
+  mysql_data:
